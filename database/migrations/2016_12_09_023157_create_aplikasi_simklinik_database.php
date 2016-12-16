@@ -355,6 +355,7 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->increments('id');
                 $table->string('no_faktur_retur', 100);
                 $table->string('no_faktur_pembelian', 100);
+                $table->string('no_faktur_hutang', 100);
                 $table->date('tanggal');
                 $table->time('jam');
                 $table->string('kode_barang', 100);
@@ -2299,6 +2300,7 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->string('kode_produk', 100);
                 $table->string('konversi', 100);
                 $table->integer('harga_pokok');
+                $table->integer('harga_jual_konversi')->nullable();
             });
 
 
