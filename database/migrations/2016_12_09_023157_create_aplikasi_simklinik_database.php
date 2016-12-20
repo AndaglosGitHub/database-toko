@@ -355,7 +355,7 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->increments('id');
                 $table->string('no_faktur_retur', 100);
                 $table->string('no_faktur_pembelian', 100);
-                $table->string('no_faktur_hutang', 100);
+                $table->string('no_faktur_hutang', 100)->nullable();
                 $table->date('tanggal');
                 $table->time('jam');
                 $table->string('kode_barang', 100);
@@ -368,6 +368,7 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->integer('subtotal');
                 $table->integer('potongan');
                 $table->integer('tax');
+                $table->integer('kredit_lama')->nullable();
             });
 
 
@@ -701,6 +702,7 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->increments('id');
                 $table->string('no_faktur_retur', 100);
                 $table->string('no_faktur_pembelian', 100);
+                $table->string('no_faktur_hutang', 100)->nullable();
                 $table->date('tanggal');
                 $table->time('jam');
                 $table->string('kode_barang', 100);
@@ -712,6 +714,7 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->integer('potongan');
                 $table->integer('tax');
                 $table->string('user_hapus', 100);
+                $table->integer('kredit_lama')->nullable();
             });
 
 
@@ -991,6 +994,8 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->string('nama_suplier', 100);
                 $table->string('keterangan', 100)->nullable();
                 $table->integer('total');
+                $table->integer('total_bayar')->nullable();
+                $table->integer('potongan_hutang')->nullable();
                 $table->integer('potongan');
                 $table->integer('tax');
                 $table->string('user_buat', 100)->nullable();
@@ -2242,6 +2247,8 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->string('nama_suplier', 100);
                 $table->string('keterangan', 100)->nullable();
                 $table->integer('total');
+                $table->integer('total_bayar')->nullable();
+                $table->integer('potongan_hutang')->nullable();
                 $table->integer('potongan');
                 $table->integer('tax');
                 $table->string('user_buat', 100)->nullable();
@@ -2327,6 +2334,7 @@ class CreateAplikasiSimklinikDatabase extends Migration {
                 $table->string('tunai_retur_beli', 100);
                 $table->string('kredit_retur_beli', 100);
                 $table->string('kredit_retur_jual', 100);
+                $table->string('bayar_hutang_retur', 100)->nullable();
                 $table->string('potongan_jual', 100);
                 $table->string('pajak_jual', 100);
                 $table->string('total_penjualan', 100);

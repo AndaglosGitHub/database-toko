@@ -172,9 +172,10 @@ class TriggerSimKlinik extends Migration{
 
         DB::unprepared('   
            CREATE TRIGGER `hapus_detail_item_keluar` AFTER DELETE ON `detail_item_keluar` FOR EACH ROW
-            
+            BEGIN
                 DELETE FROM hpp_keluar WHERE no_faktur = old.no_faktur AND kode_barang = old.kode_barang;
                 DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur;
+            END
             
         ');
 
@@ -187,34 +188,35 @@ class TriggerSimKlinik extends Migration{
 
         DB::unprepared('   
            CREATE TRIGGER `hapus_hpp_jurnal_stok_opname` AFTER DELETE ON `detail_stok_opname` FOR EACH ROW
-                       
+            BEGIN      
                DELETE FROM hpp_masuk WHERE no_faktur = old.no_faktur AND kode_barang = old.kode_barang AND jumlah_kuantitas = sisa;               
                DELETE FROM hpp_keluar WHERE no_faktur = old.no_faktur AND kode_barang = old.kode_barang;
-               DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur;        
+               DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur;   
+            END     
             
         ');
 
         DB::unprepared('   
            CREATE TRIGGER `hapus_hpp_keluar` AFTER DELETE ON `detail_penjualan` FOR EACH ROW
-                      
+            BEGIN          
                DELETE FROM hpp_keluar WHERE no_faktur = old.no_faktur AND kode_barang = old.kode_barang;
                DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur;           
-           
+           END
         ');
         DB::unprepared('   
            CREATE TRIGGER `hapus_hpp_masuk_detail_item_masuk` AFTER DELETE ON `detail_item_masuk` FOR EACH ROW
-                      
+            BEGIN          
                DELETE FROM hpp_masuk WHERE no_faktur = old.no_faktur AND kode_barang = old.kode_barang AND sisa = jumlah_kuantitas;           
                DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur;           
-           
+           END
         ');
 
         DB::unprepared('   
            CREATE TRIGGER `hapus_hpp_masuk_pembelian` AFTER DELETE ON `detail_pembelian` FOR EACH ROW
-                      
+            BEGIN          
                DELETE FROM hpp_masuk WHERE no_faktur = old.no_faktur AND kode_barang = old.kode_barang;
                DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur;           
-           
+           END
         ');
 
         DB::unprepared('   
@@ -242,17 +244,19 @@ class TriggerSimKlinik extends Migration{
 
         DB::unprepared('    
            CREATE TRIGGER `hapus_hpp_retur_pembelian` AFTER DELETE ON `detail_retur_pembelian` FOR EACH ROW
-                      
+          BEGIN           
             DELETE FROM hpp_keluar WHERE no_faktur = old.no_faktur_retur AND kode_barang = old.kode_barang;
-            DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur_retur;           
+            DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur_retur;  
+          END         
            
         ');
 
         DB::unprepared('   
            CREATE TRIGGER `hapus_hpp_retur_penjualan` AFTER DELETE ON `detail_retur_penjualan` FOR EACH ROW
-                      
+           BEGIN           
             DELETE FROM hpp_masuk WHERE no_faktur = old.no_faktur_retur AND kode_barang = old.kode_barang AND jumlah_kuantitas = sisa;
-            DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur_retur;           
+            DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur_retur;       
+            END    
            
         ');
 
@@ -293,9 +297,10 @@ class TriggerSimKlinik extends Migration{
 
         DB::unprepared('   
            CREATE TRIGGER `hapus_jurnal_transaksi` AFTER DELETE ON `pembayaran_hutang` FOR EACH ROW 
-                     
+              BEGIN       
                 DELETE FROM jurnal_trans WHERE no_faktur = old.no_faktur_pembayaran;
-                DELETE FROM tbs_pembayaran_hutang WHERE no_faktur_pembayaran = old.no_faktur_pembayaran;           
+                DELETE FROM tbs_pembayaran_hutang WHERE no_faktur_pembayaran = old.no_faktur_pembayaran;       
+                END   
             
         ');
 
@@ -807,41 +812,45 @@ class TriggerSimKlinik extends Migration{
         DB::unprepared('           
            CREATE TRIGGER `update_hpp_masuk` AFTER DELETE ON `hpp_keluar` FOR EACH ROW
            
-           
+           BEGIN
            
            UPDATE hpp_masuk SET sisa = sisa + old.jumlah_kuantitas WHERE no_faktur = old.no_faktur_hpp_masuk AND kode_barang = old.kode_barang;
            
-           
+           END
            
         ');
          
          DB::unprepared('  
            CREATE TRIGGER `update_hutang_pembelian` AFTER DELETE ON `detail_pembayaran_hutang` FOR EACH ROW
            
-           
+           BEGIN
            
            UPDATE pembelian SET kredit = kredit + old.potongan + old.jumlah_bayar WHERE no_faktur = old.no_faktur_pembelian;
            
            UPDATE pembelian SET status = "Lunas" WHERE kredit = 0 AND no_faktur = old.no_faktur_pembelian;
-           
+           END
            
         ');
          
          DB::unprepared('  
            CREATE TRIGGER `update_jurnal` AFTER UPDATE ON `stok_awal` FOR EACH ROW
            
+           BEGIN
            
            UPDATE jurnal_trans SET kredit = kredit - old.total + new.total  WHERE no_faktur = new.no_faktur AND debit = 0;
            
            UPDATE jurnal_trans SET debit = debit - old.total + new.total  WHERE no_faktur = new.no_faktur AND kredit = 0;
            
            UPDATE hpp_masuk SET jumlah_kuantitas = new.jumlah_awal , sisa = new.jumlah_awal ,total_nilai = new.total WHERE no_faktur = new.no_faktur AND kode_barang = new.kode_barang;
+
+           END
            
         ');
          
          DB::unprepared('  
            CREATE TRIGGER `update_pembelian_hutang_insert` AFTER INSERT ON `detail_pembayaran_hutang` FOR EACH ROW
            
+           BEGIN
            
            UPDATE pembelian SET kredit = kredit - new.jumlah_bayar - new.potongan WHERE no_faktur = new.no_faktur_pembelian;
            
@@ -849,32 +858,32 @@ class TriggerSimKlinik extends Migration{
            
            UPDATE pembelian SET status = "Hutang" WHERE kredit > 0 AND no_faktur = new.no_faktur_pembelian;
            
-           
+           END
         ');
          
          DB::unprepared('  
            CREATE TRIGGER `update_penjualan_piutang` AFTER DELETE ON `detail_pembayaran_piutang` FOR EACH ROW
            
-           
+           BEGIN
            
            UPDATE penjualan SET kredit = kredit + old.potongan + old.jumlah_bayar WHERE no_faktur = old.no_faktur_penjualan;
            
            UPDATE penjualan SET status = "Lunas" WHERE kredit = 0 AND no_faktur = old.no_faktur_penjualan;
-           
+           END
            
         ');
          
          DB::unprepared('  
            CREATE TRIGGER `update_penjualan_piutang_insert` AFTER INSERT ON `detail_pembayaran_piutang` FOR EACH ROW
            
-           
+           BEGIN
            UPDATE penjualan SET kredit = kredit - new.jumlah_bayar - new.potongan WHERE no_faktur = new.no_faktur_penjualan;
            
            UPDATE penjualan SET status = "Lunas" WHERE kredit = 0 AND no_faktur = new.no_faktur_penjualan;
            
            UPDATE penjualan SET status = "Piutang" WHERE kredit > 0 AND no_faktur = new.no_faktur_penjualan;
            
-           
+           END
         ');
 
 
